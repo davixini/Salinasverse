@@ -1,0 +1,132 @@
+media:
+  input: site/media
+  output: /Salinasverse/media
+content:
+  - name: articles
+    label: Artículos y personajes
+    type: file
+    path: site/data/articles.json
+    format: json
+    list: true
+    fields:
+      - name: title
+        label: Título
+        type: string
+        required: true
+      - name: slug
+        label: Dirección interna
+        type: string
+        required: true
+        pattern: "^[a-z0-9-]+$"
+      - name: type
+        label: Categoría
+        type: select
+        options:
+          values:
+            - PERSON
+            - EVENT
+            - CULTURE
+            - PLACE
+            - HISTORY
+            - ARTICLE
+      - name: status
+        label: Publicación
+        type: select
+        options:
+          values:
+            - PUBLISHED
+            - DRAFT
+      - name: subtitle
+        label: Subtítulo
+        type: string
+      - name: summary
+        label: Resumen
+        type: text
+      - name: body
+        label: Contenido
+        type: text
+      - name: image
+        label: Imagen principal
+        type: image
+      - name: categories
+        label: Categorías adicionales
+        type: string
+        list: true
+      - name: tags
+        label: Etiquetas
+        type: string
+        list: true
+      - name: aliases
+        label: Alias de búsqueda
+        type: string
+        list: true
+      - name: facts
+        label: Ficha informativa
+        type: object
+        fields:
+          - name: Curso o generación
+            type: string
+          - name: Primera aparición
+            type: string
+      - name: references
+        label: Referencias
+        type: object
+        list: true
+        fields:
+          - name: label
+            label: Fuente
+            type: string
+          - name: url
+            label: Enlace
+            type: string
+          - name: note
+            label: Nota
+            type: string
+      - name: related
+        label: Artículos relacionados (slugs)
+        type: string
+        list: true
+      - name: featured
+        label: Destacado
+        type: boolean
+      - name: incomplete
+        label: Información incompleta
+        type: boolean
+      - name: date
+        label: Fecha del acontecimiento
+        type: date
+      - name: academicYear
+        label: Curso académico
+        type: string
+      - name: createdAt
+        label: Fecha de creación
+        type: date
+      - name: updatedAt
+        label: Última actualización
+        type: date
+  - name: events
+    label: Cronología
+    type: file
+    path: site/data/events.json
+    format: json
+    list: true
+    fields:
+      - name: title
+        label: Acontecimiento
+        type: string
+        required: true
+      - name: description
+        label: Descripción
+        type: text
+      - name: date
+        label: Fecha
+        type: date
+      - name: academicYear
+        label: Curso académico
+        type: string
+      - name: category
+        label: Clasificación
+        type: string
+      - name: articleSlug
+        label: Slug del artículo relacionado
+        type: string
