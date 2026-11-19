@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+model Article {
+  id String @id @default(cuid())
+  slug String @unique
+  title String
+  subtitle String?
+  summary String? @db.Text
+  content String @db.Text
+  imageUrl String?
+  type String @default("ARTICLE")
+  status String @default("PUBLISHED")
+  featured Boolean @default(false)
+  incomplete Boolean @default(false)
+  viewCount Int @default(0)
+  facts Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  categories Category[] @relation("ArticleCategories")
+  tags Tag[] @relation("ArticleTags")
+  references Reference[]
+  outgoing ArticleRelation[] @relation("FromArticle")
+  incoming ArticleRelation[] @relation("ToArticle")
+  revisions Revision[]
+  events Event[]
+  visits Visit[]
+  @@index([status, updatedAt])
+  @@index([type, status])
+  @@index([title])
+}
+model Category {
+  id String @id @default(cuid())
+  name String @unique
+  slug String @unique
+  description String? @db.Text
+  articles Article[] @relation("ArticleCategories")
+}
+model Tag {
+  id String @id @default(cuid())
+  name String @unique
+  articles Article[] @relation("ArticleTags")
+}
+model Reference {
+  id String @id @default(cuid())
+  label String
+  url String?
+  note String?
+  articleId String
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}
+model ArticleRelation {
+  id String @id @default(cuid())
+  fromId String
+  toId String
+  label String?
+  from Article @relation("FromArticle", fields: [fromId], references: [id], onDelete: Cascade)
+  to Article @relation("ToArticle", fields: [toId], references: [id], onDelete: Cascade)
+  @@unique([fromId, toId])
+}
+model Revision {
+  id String @id @default(cuid())
+  articleId String
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  snapshot Json
+  createdAt DateTime @default(now())
+  actor String @default("admin")
+  @@index([articleId, createdAt])
+}
+model Event {
+  id String @id @default(cuid())
+  articleId String?
+  article Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+  title String
+  description String @db.Text
+  date DateTime?
+  academicYear String?
+  category String?
+  createdAt DateTime @default(now())
+  @@index([date])
+}
+model Visit {
+  id String @id @default(cuid())
+  articleId String?
+  article Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+  visitedAt DateTime @default(now())
+  @@index([visitedAt])
+}
+model Setting {
+  key String @id
+  value Json
+  updatedAt DateTime @updatedAt
+}
+model Admin {
+  id String @id @default("owner")
+  username String @unique
+  passwordHash String
+  createdAt DateTime @default(now())
+}
